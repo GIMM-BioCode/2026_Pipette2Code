@@ -93,7 +93,10 @@ In this repository there is a Jupyter notebook vignette which includes the codes
 The notebooks also includes a Google Colab setup cell. Executing the cell should automatically set up the right environment for Google Colab.
 
 ## Slides
-The slides of the practical session will be provided soon.
+The slides of the presentations are provided in the `slides` folder:
+* [pseudotime_velocity_theory.pdf](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/slides/pseudotime_velocity_theory.pdf): Theory session
+* [pseudotime_velocity_practical.pdf](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/slides/pseudotime_velocity_practical.pdf): Practical session
+***Note*** Further updates to the slides may still be made
 
 ## More vignettes:
 There are more vignettes available in Github for scRNA-seq data analysis:
