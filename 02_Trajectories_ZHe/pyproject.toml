@@ -1,0 +1,19 @@
+[project]
+name = "02-trajectories-zhe"
+version = "0.1.0"
+description = "Pseudotime, trajectory and RNA velocity analysis with scanpy"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "scanpy>=1.10",
+    "scvelo>=0.3",
+    "cellrank>=2.0",
+    "numpy<2.0",
+    "pandas",
+    "matplotlib",
+    "scipy",
+    "ipykernel",
+    "jupyterlab",
+    "scikit-misc>=0.5.2",
+    "leidenalg>=0.11.0",
+]
