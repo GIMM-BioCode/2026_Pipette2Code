@@ -1,4 +1,4 @@
-# Velocity
+# Trajactory and velocity analysis
 
 This session is handled by [Zhisong He](https://zhisonghe.wixsite.com/home/)
 
@@ -53,7 +53,7 @@ For the Python part, you can also use Google Colab (https://colab.research.googl
 ```
 Next, install the required Python packages with `pip`. Use the Colab-specific requirements file to avoid conflicts with Colab's built-in Jupyter infrastructure:
 ```
-!pip install -r 2026_Pipette2Code/02_Trajectories_ZHe/requirements-colab.txt
+!pip install -q -r 2026_Pipette2Code/02_Trajectories_ZHe/requirements-colab.txt
 ```
 Then **restart the runtime** before running any cells (Runtime → Restart runtime).
 
@@ -61,7 +61,7 @@ Then **restart the runtime** before running any cells (Runtime → Restart runti
 
 To also run the pyURD section, install it after the above (pyURD is not on PyPI):
 ```
-!pip install git+https://github.com/zhisonghe/pyurd.git
+!pip install -q git+https://github.com/zhisonghe/pyurd.git
 ```
 Then restart the runtime again before running the notebook.
 
@@ -69,7 +69,7 @@ You can also download a file to the virtual machine so that you can load it into
 ```
 !mkdir data
 !wget -O 'data/DS1.h5ad' 'https://polybox.ethz.ch/index.php/s/GCZzdxkMiTp5ZQH'
-!wget -O 'data/DS1_raw.h5ad 'https://polybox.ethz.ch/index.php/s/GeXSaepAk9fjQqk'
+!wget -O 'data/DS1_raw.h5ad' 'https://polybox.ethz.ch/index.php/s/GeXSaepAk9fjQqk'
 ```
 You can also mount your Google Drive at the Colab notebook, in order to access your files there or to place the downloaded/saved file there:
 ```
@@ -86,7 +86,11 @@ The example dataset is available as h5ad files (DS1.h5ad: [link](https://polybox
 * `DS1_raw.h5ad` contains all features in the standard Cell Ranger output. The X matrix is raw count matrix. Full metadata is included, but no other analysis results is yet included.
 
 ## Jupyter notebook vignette
-In this repository there is a Jupyter notebook tutorial which includes the codes for the practical session: [pseudotime_trajectory_velocity.ipynb](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/pseudotime_trajectory_velocity.ipynb).
+In this repository there is a Jupyter notebook vignette which includes the codes for the practical session:
+* [Tutorial.ipynb](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/Tutorial.ipynb): Jupyter notebook vignette with both codes and output;
+* [Tutorial_cleared.ipynb](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/Tutorial_cleared.ipynb): Jupyter notebook vignette with only codes (recommended to start with).
+
+The notebooks also includes a Google Colab setup cell. Executing the cell should automatically set up the right environment for Google Colab.
 
 ## Slides
 The slides of the practical session will be provided soon.
