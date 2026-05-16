@@ -86,9 +86,9 @@ The example dataset is available as h5ad files (DS1.h5ad: [link](https://polybox
 * `DS1_raw.h5ad` contains all features in the standard Cell Ranger output. The X matrix is raw count matrix. Full metadata is included, but no other analysis results is yet included.
 
 ## Jupyter notebook vignette
-In this repository there is a Jupyter notebook vignette which includes the codes for the practical session:
-* [Tutorial.ipynb](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/Tutorial.ipynb): Jupyter notebook vignette with both codes and output;
-* [Tutorial_cleared.ipynb](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/Tutorial_cleared.ipynb): Jupyter notebook vignette with only codes (recommended to start with).
+In this repository there are Jupyter notebook vignettes in the `vignettes` folder, which include the codes for the practical session:
+* [Tutorial.ipynb](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/vignettes/Tutorial.ipynb): Jupyter notebook vignette with both codes and output;
+* [Tutorial_cleared.ipynb](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/vignettes/Tutorial_cleared.ipynb): Jupyter notebook vignette with only codes (recommended to start with).
 
 The notebooks also includes a Google Colab setup cell. Executing the cell should automatically set up the right environment for Google Colab.
 
@@ -96,6 +96,7 @@ The notebooks also includes a Google Colab setup cell. Executing the cell should
 The slides of the presentations are provided in the `slides` folder:
 * [pseudotime_velocity_theory.pdf](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/slides/pseudotime_velocity_theory.pdf): Theory session
 * [pseudotime_velocity_practical.pdf](https://github.com/GIMM-BioCode/2026_Pipette2Code/blob/main/02_Trajectories_ZHe/slides/pseudotime_velocity_practical.pdf): Practical session
+
 ***Note*** Further updates to the slides may still be made
 
 ## More vignettes:
