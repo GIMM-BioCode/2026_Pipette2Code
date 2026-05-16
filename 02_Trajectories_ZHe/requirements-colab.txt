@@ -1,0 +1,62 @@
+# Requirements for Google Colab
+#
+# Excludes Jupyter infrastructure packages (ipykernel, ipython, tornado,
+# jupyter-server, requests, etc.) that are managed by Colab and must not
+# be overridden to keep the runtime stable.
+#
+# Install with:
+#   pip install -r requirements-colab.txt
+# Then restart the runtime before running the notebook.
+#
+# pyURD is not on PyPI — install separately after the above:
+#   pip install git+https://github.com/zhisonghe/pyurd.git
+
+# ── Core single-cell analysis ─────────────────────────────────────────────────
+anndata==0.12.14
+scanpy==1.11.5
+scvelo==0.3.4
+cellrank==2.0.7
+
+# ── Dimensionality reduction & clustering ─────────────────────────────────────
+leidenalg==0.11.0
+umap-learn==0.5.12
+igraph==1.0.0
+pynndescent==0.6.0
+
+# ── JIT compilation (required by scvelo / numba) ──────────────────────────────
+# numpy pinned at 1.26.x for numba 0.65 / scvelo compatibility
+numpy==1.26.4
+numba==0.65.1
+llvmlite==0.47.0
+
+# ── Scientific computing ──────────────────────────────────────────────────────
+scipy==1.16.3
+scikit-learn==1.8.0
+scikit-misc==0.5.2
+statsmodels==0.14.6
+patsy==1.0.2
+pygam==0.12.0
+pygpcca==1.0.4
+numpy-groupies==0.11.3
+array-api-compat==1.14.0
+
+# ── Data I/O ──────────────────────────────────────────────────────────────────
+h5py==3.16.0
+loompy==3.0.8
+zarr==3.1.5
+numcodecs==0.16.5
+
+# ── Plotting ──────────────────────────────────────────────────────────────────
+matplotlib==3.10.9
+seaborn==0.13.2
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+pandas==2.3.3
+networkx==3.6.1
+natsort==8.4.0
+tqdm==4.67.3
+docrep==0.3.2
+legacy-api-wrap==1.5
+scverse-misc==0.0.3
+session-info2==0.4.1
+texttable==1.7.0
