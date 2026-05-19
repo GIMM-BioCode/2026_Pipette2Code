@@ -68,8 +68,8 @@ Then restart the runtime again before running the notebook.
 You can also download a file to the virtual machine so that you can load it into the session. For example:
 ```
 !mkdir 2026_Pipette2Code/02_Trajectories_ZHe/data
-!wget -q -O '2026_Pipette2Code/02_Trajectories_ZHe/data/DS1.h5ad' 'https://polybox.ethz.ch/index.php/s/GCZzdxkMiTp5ZQH'
-!wget -q -O '2026_Pipette2Code/02_Trajectories_ZHe/data/DS1_raw.h5ad' 'https://polybox.ethz.ch/index.php/s/GeXSaepAk9fjQqk'
+!wget -q -O '2026_Pipette2Code/02_Trajectories_ZHe/data/DS1.h5ad' 'https://polybox.ethz.ch/index.php/s/GCZzdxkMiTp5ZQH/download/DS1.h5ad'
+!wget -q -O '2026_Pipette2Code/02_Trajectories_ZHe/data/DS1_raw.h5ad' 'https://polybox.ethz.ch/index.php/s/GeXSaepAk9fjQqk/download/DS1_raw.h5ad'
 ```
 You can also mount your Google Drive at the Colab notebook, in order to access your files there or to place the downloaded/saved file there:
 ```
