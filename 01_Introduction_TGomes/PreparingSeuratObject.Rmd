@@ -1,0 +1,174 @@
+---
+title: "Preparing a Seurat object from scratch"
+output: html_notebook
+---
+
+The goal of this short tutorial is learning how to prepare a Seurat object from scratch. You will see which methods are used (often without users knowing) for filtering microdroplet-based datasets and remove droplets which do not contain a cell.
+
+# General setup
+Load necessary libraries
+
+```{r}
+# Bioconductor package installer
+if(!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+packages_use = c("Seurat", "SeuratObject", # package with conviniently organised scRNA-seq methods
+                 "Matrix", # package to work with sparse matrices
+                 "DropletUtils") # package with some methods for cleaning microdroplet-based scRNA-seq data
+
+# R 4.3.2 - can only have Matrix up to 1.6.5 which is not installed by default, and SeuratObject requires Matrix>1.6.3
+## solution - install from source (use link online)
+
+# for each package listed: if not installed, install, otherwise load it
+for(p in packages_use){
+  if(!(p %in% rownames(installed.packages()))){
+    BiocManager::install(p)
+  } else{
+    library(p, character.only = T)
+  }
+}
+
+# set seed (might not be needed, but good practice)
+set.seed(1)
+```
+
+
+
+# Prepare the data
+## Read in data
+Here we will be using a test dataset derived from human Peripheral Blood Mononuclear Cells (PBMCs).  
+The data can be obtained from: https://drive.google.com/file/d/1P2-KX1DcuCmQUaQctTzIxi_KkF5t0Oo5/view?usp=sharing. Download and unpack it, and change `topdir` accordingly.  
+
+```{r}
+topdir = "./dataset1/" # source dir (CHANGE)
+exp = Matrix::readMM(paste0(topdir, "matrix.mtx.gz")) #read matrix
+bc = read.csv(paste0(topdir, "barcodes.tsv.gz"), header = F, stringsAsFactors = F)
+g = read.csv(paste0(topdir, "features.tsv.gz"), header = F, stringsAsFactors = F, sep = "\t")
+```
+
+This is the raw quantified matrix, meaning it includes all droplets, whether they contain a cell or not. This can be seen firstly by the large number of columns (i.e. "cells") in the matrix (after filtering, a sample will usually have 5-30k cells due to 10x Genomics limitations, though other methods may have different limits).
+
+```{r}
+dim(exp) # genes-by-cells
+```
+
+
+## Ambient RNA
+Microdroplet experiments will have some degree of free floating "ambient RNA". The ambient RNA proportions can be estimated from the set of droplets we consider truly empty, meaning, no chance they contain a real live cell. Usually, 100 UMI is a good upper threshold for this. 
+
+```{r}
+colnames(exp) = bc$V1
+rownames(exp) = g$V2
+
+amb_prop = estimateAmbience(exp, lower = 100)
+```
+
+We can then plot the proportions for the top represented genes. In some datasets, we are able to see and enrichment for genes highly expressed in cell types that are more sensitive to processing (e.g. B cells). 
+
+```{r, fig.width=11, fig.height=4}
+# get top ten genes
+barplot(head(amb_prop[order(amb_prop, decreasing = T)], 25), cex.names = 0.45, cex.axis = 0.5)
+```
+
+
+## Detecting empty droplets
+Detection of empty droplets depends on their RNA content. We can rank cells and make a plot similar to the one found in the CellRanger web_summary
+
+```{r, fig.height=5, fig.width=5}
+br.out = DropletUtils::barcodeRanks(exp)
+
+plot(br.out$rank, br.out$total, log="xy", xlab="Rank", ylab="Total")
+o <- order(br.out$rank)
+lines(br.out$rank[o], br.out$fitted[o], col="red")
+abline(h=metadata(br.out)$knee, col="dodgerblue", lty=2)
+abline(h=metadata(br.out)$inflection, col="forestgreen", lty=2)
+legend("bottomleft", lty=2, col=c("dodgerblue", "forestgreen"), 
+       legend=c("knee", "inflection"))
+```
+
+CellRanger will perform empty droplet detection as part of its pipeline. The raw and filtered files can be found in the folders with this same name.  
+The older version of CellRanger performed detection solely base don the top expressing cells. A droplet would be considered a cell if its counts were at least 10% of the 0.99 quantile of the top 5000 counts (all these values are adjustable parameters).
+
+```{r}
+# default CellRanger v2 algorithm (takes the top cells)
+iscell_dd = defaultDrops(exp, expected = 5000)
+
+meta = data.frame(row.names = bc$V1, iscell_dd = iscell_dd)
+```
+
+The previous algorithm would bias the capture to larger cells with greater RNA content. EmptyDrops was a method introduced to instead compare the transcriptome of droplets with the transcriptional profile of croplets we for sure would consider empty (in the example below, droplets with fewer than 200 UMI).
+
+```{r}
+# empty drops algorithm - alternative to the default algorithm but also slower
+eout = emptyDrops(exp, lower = 200) # should take 5-10min
+eout$FDR[is.na(eout$FDR)] = 1 # needs some correction on NA values
+iscell_ed = eout$FDR<=0.01 # thresholding based on adjusted p-value
+
+# get both filters in a metadata matrix
+meta$iscell_ed = iscell_ed
+
+# compare both algorithms
+table(iscell_dd, iscell_ed)
+```
+
+The current version of CellRanger uses a version of this algorithm that also adjusts the cutoff for cells with a higher gene expression profile
+
+```{r}
+# emptyDrops algorithm in CellRanger
+ecrout = emptyDropsCellRanger(exp)
+ecrout$FDR[is.na(ecrout$FDR)] = 1 # needs some correction on NA values
+iscell_ec = ecrout$FDR<=0.01 # thresholding based on adjusted p-value
+meta$iscell_ec = iscell_ec
+
+# compare both algorithms
+table(iscell_ed, iscell_ec)
+```
+
+We can now see how cell detection worked with each of these algorithms
+
+```{r, fig.height=5, fig.width=15}
+par(mfrow = c(1, 3))
+plot(br.out$rank, br.out$total, log="xy", xlab="Rank", ylab="Total", 
+     pch = 19, cex = 0.6,
+     col = iscell_dd+2, main = "Old CellRanger algorithm")
+
+plot(br.out$rank, br.out$total, log="xy", xlab="Rank", ylab="Total", 
+     pch = 19, cex = 0.6,
+     col = iscell_ed+2, main = "EmptyDrops algorithm")
+
+plot(br.out$rank, br.out$total, log="xy", xlab="Rank", ylab="Total", 
+     pch = 19, cex = 0.6,
+     col = iscell_ec+2, main = "Current CellRanger algorithm")
+```
+
+
+## Create Seurat object
+Finally, we will be filtering the raw expression matrix, and will use it to create a Seurat object
+
+```{r}
+# filter for cells
+cellcond = colSums(exp)>0 & meta$iscell_ec
+# filter for genes (only keep those expressed)
+## this may not be correct when combining different datasets!
+genecond = rowSums(exp)>0
+exp = exp[genecond, cellcond]
+meta = meta[cellcond,]
+print(dim(exp))
+
+# we will be using gene names instead of gene IDs for this analysis. because the same gene name may be
+## assigned to different genes, we first need to join them by summing their counts
+exp = rowsum(as.matrix(exp), group = rownames(exp))
+
+srat = CreateSeuratObject(counts = exp, meta.data = meta)
+```
+
+Seurat objects, like other objects in R, can be saved as an RDS file. It's important to do it at key points during the analysis in in case you need to recover your work
+
+```{r}
+# no need to actually do it here
+#saveRDS(srat, file = "./data/filename.RDS")
+```
+
+
+
